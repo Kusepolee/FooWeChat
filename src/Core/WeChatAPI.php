@@ -87,10 +87,6 @@ class WeChatAPI
             //print_r($res2);
             var_dump($res2);
 
-            //return $ress;
-            //return $res->'errmsg';
-            //return $weChatGetTalkenUrl;
-            //return 'null';
         };
 	}
 }
