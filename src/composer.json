@@ -24,4 +24,9 @@
     "autoload": {
         "FooWeChat\\": "src/"
     },
+    "scripts": {
+        "post-create-project-cmd": [
+            "php artisan vendor:publish"
+        ]
+    }
 }

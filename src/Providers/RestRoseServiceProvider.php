@@ -16,11 +16,11 @@ class RestRoseServiceProvider extends ServiceProvider
     {
          $this->publishes([
             __DIR__.'/../Publishes/Config/wechat.php' => config_path('wechat.php'),
-        ]);
+        ], 'config');
 
         $this->publishes([
             __DIR__.'/../Publishes/Migrations/' => database_path('migrations')
-        ]);
+        ], 'migrations');
     }
 
     /**
