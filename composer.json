@@ -1,11 +1,11 @@
 {
     "name": "restrose/wechat",
-    "description": "Laravel-WeChat SDK",
+    "description": "WeChat SDK for Laravel5",
     "keywords": [
         "wechat",
         "weixin",
-        "weixin-sdk",
-        "sdk"
+        "laravel5 wechat",
+        "laravel wechat"
     ],
     "license": "MIT",
     "authors": [
