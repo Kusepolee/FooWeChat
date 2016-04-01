@@ -1,6 +1,6 @@
 {
     "name": "restrose/wechat",
-    "description": "微信SDK",
+    "description": "Laravel-WeChat SDK",
     "keywords": [
         "wechat",
         "weixin",
