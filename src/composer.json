@@ -1,0 +1,27 @@
+{
+    "name": "restrose/FooWeChat",
+    "description": "RestRose WeChat SDK",
+    "keywords": [
+        "WeChat",
+        "weixin",
+        "SDK"
+    ],
+    "homepage": "https://restrose.net",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kris",
+            "email": "kris@restrose.net"
+        },
+        {
+            "name": "RestRose Community",
+            "homepage": "https://restrose.net/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9"
+    },
+    "autoload": {
+        "FooWeChat\\": "src/"
+    },
+}
