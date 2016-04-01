@@ -1,4 +1,4 @@
 # FooWeChat
-Init
--kris
--louis
+FooWeChat: WeChat SDK for laravel5+
+
+work+
