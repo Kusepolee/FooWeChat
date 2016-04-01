@@ -1,27 +1,25 @@
 {
-    "name": "restrose/FooWeChat",
-    "description": "RestRose WeChat SDK",
+    "name": "restrose/wechat",
+    "description": "微信SDK",
     "keywords": [
-        "WeChat",
+        "wechat",
         "weixin",
-        "SDK"
+        "weixin-sdk",
+        "sdk"
     ],
-    "homepage": "https://restrose.net",
     "license": "MIT",
     "authors": [
         {
-            "name": "Kris",
-            "email": "kris@restrose.net"
-        },
-        {
-            "name": "RestRose Community",
-            "homepage": "https://restrose.net/contributors"
+            "name": "overtrue",
+            "email": "anzhengchao@gmail.com"
         }
     ],
     "require": {
-        "php": ">=5.5.9"
+        "php":">=5.5.0"
     },
     "autoload": {
-        "FooWeChat\\": "src/"
-    },
+        "psr-4": {
+            "FooWeChat\\": "src/"
+        },
+    }
 }
