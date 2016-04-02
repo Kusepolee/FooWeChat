@@ -89,7 +89,7 @@ class WeChatAPI
 
             //新建或者更新数据库
             $go = App\ServerVal::updateOrCreate(['var_name' => 'token'], ['var_value'=> $wehatToken, 'var_up_time' => time()]);
-            //$flight = App\ServerVal::create(['var_name' => 'wechat_token', 'var_value'=> $wehatToken, 'var_up_time' => time()]);
+
             return $wehatToken;
 
         };
