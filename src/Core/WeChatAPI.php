@@ -4,6 +4,7 @@ namespace FooWeChat\Core;
 
 use App;
 use Config;
+use GuzzleHttp\Client;
 
 /**
 * 微信核心API
@@ -16,6 +17,8 @@ class WeChatAPI
     private $corpSecret;
     private $corpTalken;
     private $agentID;
+
+    protected $client;
 
     /**
      * 构造函数
@@ -53,8 +56,8 @@ class WeChatAPI
      */
     private function searchServeVal($key)
     {
-        $recArray = App\ServerVal::where('name',$key)
-                            ->where('updated_time', '>', (time() -7200))
+        $recArray = App\ServerVal::where('val_name',$key)
+                            ->where('updated_time', '>', (time() - 7200))
                             ->get();
         return $recArray;
     }
@@ -70,25 +73,24 @@ class WeChatAPI
 	public function getAccessToken()
 	{
 
-        $serverVal = $this->searchServeVal('talken');
+        $serverVal = $this->searchServeVal('token');
 		if(count($serverVal))
         {
             //可用
-            return $serverVal->val;
+            return $serverVal->vals;
 
         }else{
             //不可用
             $weChatGetTalkenUrl = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=".$this->corpID."&corpsecret=".$this->corpSecret;
-            //$c = new Client();
-            //$r = $c->get($weChatGetTalkenUrl);
-            return $weChatGetTalkenUrl;
-            //$res = file_get_contents($weChatGetTalkenUrl);
-            //$ress = json_decode($res);
-            //$res1 = utf8_encode($res);
-            //$res2 = json_decode($res);
+            $client = new Client();
+            $json = $client->get($weChatGetTalkenUrl)->getBody();
+            $arr = json_decode($json, true);
+            $wehatToken = $arr['access_token'];
 
-            //print_r($res2);
-            //var_dump($res2);
+            //新建或者更新数据库
+            App\ServerVal::updateOrCreate(['val_name' => 'token'], ['val_name' => 'token','vals'=> $wehatToken, 'updated_time' => time()]);
+
+            return $wehatToken;
 
         };
 	}

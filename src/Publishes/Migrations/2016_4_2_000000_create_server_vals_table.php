@@ -14,9 +14,9 @@ class CreateServerValsTable extends Migration
     {
         Schema::create('server_vals', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->string('val');
-            $table->integer('updated_time');
+            $table->string('var_name');
+            $table->string('var_value');
+            $table->integer('var_up_time');
         });
     }
 
