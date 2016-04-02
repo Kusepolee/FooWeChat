@@ -94,4 +94,5 @@ class WeChatAPI
             return $wehatToken;
         };
 	}
+
 }
