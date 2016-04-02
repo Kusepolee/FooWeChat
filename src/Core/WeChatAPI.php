@@ -81,14 +81,12 @@ class WeChatAPI
             return $serverVal;
         }else{
             
-            //不可用
             $weChatGetTalkenUrl = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=".$this->corpID."&corpsecret=".$this->corpSecret;
             $client = new Client();
             $json = $client->get($weChatGetTalkenUrl)->getBody();
             $arr = json_decode($json, true);
             $wehatToken = $arr['access_token'];
 
-            //新建或者更新数据库
             $go = App\ServerVal::updateOrCreate(['var_name' => 'token'], ['var_value'=> $wehatToken, 'var_up_time' => time()]);
 
             return $wehatToken;
