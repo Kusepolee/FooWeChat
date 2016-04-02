@@ -27,7 +27,7 @@ class WeChatAPI
     public function __construct()
     {
         $this->corpID = $this->conf('corpID');
-        $this->corpSecret = $this->conf('encodingAESKey');
+        $this->corpSecret = $this->conf('corpSecret');
         $this->corpTalken = $this->conf('talken');
         $this->agentID = $this->conf('agentID');
     }
@@ -79,13 +79,16 @@ class WeChatAPI
         }else{
             //不可用
             $weChatGetTalkenUrl = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=".$this->corpID."&corpsecret=".$this->corpSecret;
-            $res = file_get_contents($weChatGetTalkenUrl);
+            //$c = new Client();
+            //$r = $c->get($weChatGetTalkenUrl);
+            return $weChatGetTalkenUrl;
+            //$res = file_get_contents($weChatGetTalkenUrl);
             //$ress = json_decode($res);
             //$res1 = utf8_encode($res);
-            $res2 = json_decode($res);
+            //$res2 = json_decode($res);
 
             //print_r($res2);
-            var_dump($res2);
+            //var_dump($res2);
 
         };
 	}

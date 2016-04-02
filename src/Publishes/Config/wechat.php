@@ -17,6 +17,7 @@ return [
 
     'dev' => [
         'corpID' => 'wx53445ce4e5929352',
+        'corpSecret' => 'AHFKLwfiEgiIAh7vHBOpLfUxIpC1_IZf1o_0SFMn00_LyNNQnn-8AxRhNPducJtx',
         'agentID' => 0,
         'talken' => 'EFPF9vnXrnbyUtcBnaqvdqw6T',
         'encodingAESKey' => 'MnrTikRxQTibVLHKRcmmWsXsl5gKje4JBlsPaVa9DFl',
@@ -25,6 +26,7 @@ return [
     
     'server' => [
         'corpID' => '',
+        'corpSecret' => '',
         'agentID' => '',
         'talken' => '',
         'encodingAESKey' => '',
