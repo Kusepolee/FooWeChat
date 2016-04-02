@@ -9,4 +9,5 @@ class ServerVal extends Model
     //
     protected $table = 'server_vals'; 
     protected $fillable = ['var_name', 'var_value', 'var_up_time'];
+    public $timestamps = false;
 }
