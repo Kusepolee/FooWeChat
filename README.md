@@ -3,5 +3,8 @@ FooWeChat: WeChat SDK for laravel5+
 
 work+
 
-Kris
-Louis
+-providers:
+FooWeChat\Providers\RestRoseServiceProvider::class,
+
+-alies:
+'WeChatAPI' => FooWeChat\Facades\WeChatAPI::class, 

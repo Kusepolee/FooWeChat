@@ -31,7 +31,7 @@ class WeChatAPI
     {
         $this->corpID = $this->conf('corpID');
         $this->corpSecret = $this->conf('corpSecret');
-        $this->corpTalken = $this->conf('talken');
+        $this->corpTalken = $this->conf('token');
         $this->agentID = $this->conf('agentID');
     }
    /**
@@ -56,8 +56,8 @@ class WeChatAPI
      */
     private function searchServeVal($key)
     {
-        $recArray = App\ServerVal::where('val_name',$key)
-                            ->where('updated_time', '>', (time() - 7200))
+        $recArray = App\ServerVal::where('var_name',$key)
+                            ->where('var_up_time', '>', (time() - 7200))
                             ->get();
         return $recArray;
     }
@@ -77,7 +77,7 @@ class WeChatAPI
 		if(count($serverVal))
         {
             //可用
-            return $serverVal->vals;
+            return $serverVal->var_value;
 
         }else{
             //不可用
@@ -88,7 +88,7 @@ class WeChatAPI
             $wehatToken = $arr['access_token'];
 
             //新建或者更新数据库
-            App\ServerVal::updateOrCreate(['val_name' => 'token'], ['val_name' => 'token','vals'=> $wehatToken, 'updated_time' => time()]);
+            App\ServerVal::updateOrCreate(['var_name' => 'token'], ['var_name' => 'token','var_value'=> $wehatToken, 'var_up_time' => time()]);
 
             return $wehatToken;
 
