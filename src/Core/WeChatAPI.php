@@ -56,10 +56,12 @@ class WeChatAPI
      */
     private function searchServeVal($key)
     {
-        $recArray = App\ServerVal::where('var_name',$key)
+        $recs = App\ServerVal::where('var_name', $key)
                             ->where('var_up_time', '>', (time() - 7200))
                             ->get();
-        return $recArray;
+        foreach ($recs as $rec) {
+            return $rec->var_value;
+        }
     }
 
    /**
@@ -73,13 +75,12 @@ class WeChatAPI
 	public function getAccessToken()
 	{
 
-        $serverVal = $this->searchServeVal('wechat_token');
+        $serverVal = $this->searchServeVal('token');
 		if(count($serverVal))
         {
-            //可用
-            return $serverVal->var_value;
-
+            return $serverVal;
         }else{
+            
             //不可用
             $weChatGetTalkenUrl = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=".$this->corpID."&corpsecret=".$this->corpSecret;
             $client = new Client();
@@ -91,7 +92,6 @@ class WeChatAPI
             $go = App\ServerVal::updateOrCreate(['var_name' => 'token'], ['var_value'=> $wehatToken, 'var_up_time' => time()]);
 
             return $wehatToken;
-
         };
 	}
 }
