@@ -19,7 +19,11 @@ class RestRoseServiceProvider extends ServiceProvider
         ]);
 
         $this->publishes([
-            __DIR__.'/../Publishes/Migrations/' => database_path('migrations')
+            __DIR__.'/../Publishes/Migrations/' => database_path('migrations'),
+        ]);
+
+        $this->publishes([
+            __DIR__.'/../Publishes/Models/' => app_path(),
         ]);
     }
 
