@@ -73,7 +73,7 @@ class WeChatAPI
 	public function getAccessToken()
 	{
 
-        $serverVal = $this->searchServeVal('token');
+        $serverVal = $this->searchServeVal('wechat_token');
 		if(count($serverVal))
         {
             //可用
@@ -88,8 +88,8 @@ class WeChatAPI
             $wehatToken = $arr['access_token'];
 
             //新建或者更新数据库
-            App\ServerVal::updateOrCreate(['var_name' => 'token'], ['var_name' => 'token','var_value'=> $wehatToken, 'var_up_time' => time()]);
-
+            $go = App\ServerVal::updateOrCreate(['var_name' => 'token'], ['var_value'=> $wehatToken, 'var_up_time' => time()]);
+            //$flight = App\ServerVal::create(['var_name' => 'wechat_token', 'var_value'=> $wehatToken, 'var_up_time' => time()]);
             return $wehatToken;
 
         };
