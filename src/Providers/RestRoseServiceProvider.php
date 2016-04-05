@@ -15,6 +15,8 @@ class RestRoseServiceProvider extends ServiceProvider
     public function boot()
     {
         
+        //public: bootstrap文件
+        
 
         //Core模块
         $this->publishes([
@@ -29,7 +31,14 @@ class RestRoseServiceProvider extends ServiceProvider
             __DIR__.'/../Core/Publishes/Models/' => app_path(),
         ]);
 
+        //Departments
+        $this->publishes([
+            __DIR__.'/../Departments/Publishes/Migrations/' => database_path('migrations'),
+        ]);
 
+        $this->publishes([
+            __DIR__.'/../Departments/Publishes/Models/' => app_path(),
+        ]);
         
     }
 
