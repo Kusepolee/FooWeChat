@@ -4,6 +4,10 @@ namespace FooWeChat\Core;
 
 use App;
 use Config;
+use Cookie;
+use Input;
+use Request;
+use Session;
 use GuzzleHttp\Client;
 
 /**
@@ -13,12 +17,18 @@ use GuzzleHttp\Client;
 class WeChatAPI
 {
 
-    private $corpID;
-    private $corpSecret;
-    private $corpTalken;
-    private $agentID;
+    protected $corpID;
+    protected $corpSecret;
+    protected $corpTalken;
+    protected $agentID;
 
     protected $client;
+    protected $oAuth2UserInfoArray;
+
+    protected $tmp;
+    
+    public $code;
+    
 
     /**
      * 构造函数
@@ -43,9 +53,10 @@ class WeChatAPI
      */
 	private function conf($key)
 	{
-		$conf = Config::get('wechat');
+		$conf = Config::get('foowechat');
 		return $conf[$conf['mode']][$key];
 	}
+
 
    /**
      * 查询服务器变量
@@ -92,5 +103,70 @@ class WeChatAPI
             return $wehatToken;
         };
 	}
+
+    /**
+     * 获取微信用户信息:1. 获取cdoe
+     *
+     * @param null
+     *
+     * @return redirect url
+     */
+    public function oAuth2()
+    {
+        $redirectUrl = Request::url();
+        $weChatOauth2Url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=".$this->corpID."&redirect_uri=".$redirectUrl."&response_type=code&scope=SCOPE&state=STATE#wechat_redirect";
+
+        header("Location: $weChatOauth2Url");
+        exit;
+    }
+    
+    /**
+     * 获取微信用户信息:2. 以cdoe和token换取 UserID DeviceId
+     *
+     * @param $code, getAccessToken()
+     *
+     * @return array
+     */
+    public function oAuth2UserInfo()
+    {
+        $weChatOauth2UserInfoUrl = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=".$this->getAccessToken()."&code=".$this->code;
+        $client = new Client();
+        $json = $client->get($weChatOauth2UserInfoUrl)->getBody();
+        $arr = json_decode($json, true);
+        $this->oAuth2UserInfoArray = $arr;
+    }
+
+    public function weChatUserSetCookieAndSession()
+    {
+        $arr = $this->oAuth2UserInfoArray;
+        $userid = $arr['UserId'];
+        $deviceid = $arr['DeviceId'];
+
+        $recs = App\Member::where('work_id', $userid)->get();
+
+        if(count($recs)){
+            foreach ($recs as $rec) {
+                if($rec->state === 0){
+                    //账号状态正常
+                    if(!Session::has('id')) Session::put('id', $rec->id);
+                    if(!Session::has('name')) Session::put('name', $rec->name);
+                    if(!Session::has('department')) Session::put('department', $rec->department);
+                    if(!Session::has('position')) Session::put('position', $rec->position); 
+
+                    Cookie::queue('id', $rec->id, 20160);
+
+                }else{
+                    return view('40x')->with('errorCode','3');//权限不足
+                    exit;
+                }
+                
+            }
+
+        }else{
+            return view('40x')->with('errorCode','4');//未找到用户
+            exit;
+        }
+
+    }
 
 }

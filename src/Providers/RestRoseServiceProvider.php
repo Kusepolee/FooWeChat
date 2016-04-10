@@ -45,5 +45,6 @@ class RestRoseServiceProvider extends ServiceProvider
         {
             return new \FooWeChat\Core\WeChatAPI;
         });
+
     }
 }
