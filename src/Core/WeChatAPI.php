@@ -326,6 +326,15 @@ class WeChatAPI
     }
 
     /**
+    * 文本消息
+    *
+    */
+    public function sendText($array)
+    {
+        
+    }
+
+    /**
     * 删除: 用户
     * 
     * @param UserId = members.work_id
