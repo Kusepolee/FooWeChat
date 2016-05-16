@@ -12,10 +12,7 @@ use Request;
 use Session;
 use GuzzleHttp\Client;
 use Psr\Http\Message\StreamInterface;
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
 /**
 * 微信核心API
 */
@@ -205,7 +202,6 @@ class WeChatAPI
         if(count($recs)){
 
             foreach ($recs as $rec) {
-<<<<<<< HEAD
                 $arr  = [
                             'name'     => $rec->name, 
                             'parentid' => $rec->parentid, 
@@ -215,21 +211,6 @@ class WeChatAPI
 
                 $this->createDepartment($arr);
             } 
-=======
-                if($rec->state === 0){
-                    //账号状态正常
-                    if(!Session::has('id')) Session::put('id', $rec->id);
-                    if(!Session::has('name')) Session::put('name', $rec->name);
-
-                    Cookie::queue('id', $rec->id, 20160);
-
-                }else{
-                    return view('40x')->with('errorCode','3');//权限不足
-                    exit;
-                }
-                
-            }
->>>>>>> origin/master
 
         }else{
             return view('40x',['color'=>'red', 'type'=>'1', 'code'=>'1.2']);
@@ -261,7 +242,6 @@ class WeChatAPI
         // }
     }
 
-<<<<<<< HEAD
     public function initUsers ()
     {
        $recs = Member::where('members.id', '>', 1)
@@ -269,27 +249,10 @@ class WeChatAPI
                        ->select('members.*', 'positions.name as positionName')
                        ->get();
        //$rec = App\Member::find(2);
-=======
-
-    /**
-     * 初始化部门: 批量建立部门
-     *
-     * 要求: 从未创建部门或者清除所有部门,只余根部门
-     *
-     * @param json
-     *
-     * @return view or redirect
-     */
-    public function initDepartments ()
-    {
-        $recs = App\Department::where('id', '>', 1)->get();
-        //$arr = array();
->>>>>>> origin/master
 
         if(count($recs)){
 
             foreach ($recs as $rec) {
-<<<<<<< HEAD
                 $arr  = [
                             'userid'     => $rec->work_id,
                             'name'       => $rec->name,
@@ -338,73 +301,6 @@ class WeChatAPI
 
     /**
      * 更新: 用户
-=======
-                $arr  = array('name' => $rec->name, 
-                                'parentid' => $rec->parentid, 
-                                'order' => $rec->order, 
-                                'id' => $rec->id,
-                                );
-                $this->createDepartment($arr);
-            } 
-
-        }else{
-            return view('40x',['errorCode' => '4']);
-        }
-    }
-
-    /**
-     * 初始化部门: 新建部门
-     *
-     * 待改进: 从其他模块调用,不能等待返回值 !!!
-     *
-     * @param array :['name', 'parentid', 'order', 'id']
-     *
-     * @return null
-     */
-    public function createDepartment ($array)
-    {
-        $postJSON = json_encode($array, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
-        $weChatDepartmentCreateUrl = 'https://qyapi.weixin.qq.com/cgi-bin/department/create?access_token='.$this->getAccessToken();
-
-        $client = new Client();
-        $client->request('POST', $weChatDepartmentCreateUrl, ['body' => $postJSON])->getBody();
-        // $err = json_decode($rs, true);
-
-        // if($err['errcode'] != 0){
-        //     return view('40x',['errorCode' => '5', 'msg' => $err['errmsg']]); // 5: 微信服务器错误
-        //     exit;
-        // }
-    }
-
-    public function initUsers ()
-    {
-       $recs = App\Member::all();
-       //$rec = App\Member::find(2);
-
-        if(count($recs)){
-
-            foreach ($recs as $rec) {
-                $arr  = array(
-                                'userid' => $rec->work_id,
-                                'name' => $rec->name,
-                                'department' => explode('-',$rec->department),
-                                'position' => $rec->position,
-                                'mobile' => $rec->mobile,
-                                'gender' => $rec->gender,
-                                'email' => $rec->email,
-                                'weixinid' => $rec->weixinid,
-                                );
-                $this->createUser($arr);
-               
-            } 
-
-        }else{
-            return view('40x',['errorCode' => '4']);
-        } 
-    }
-    /**
-     * 新建: 用户
->>>>>>> origin/master
      *
      * 待改进: 从其他模块调用,不能等待返回值!!!
      *
@@ -412,7 +308,6 @@ class WeChatAPI
      *
      * @return null
      */
-<<<<<<< HEAD
     public function updateUser ($array)
     {
             $post_JSON = json_encode($array, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
@@ -421,16 +316,6 @@ class WeChatAPI
 
             $client = new Client();
             $rs = $client->request('POST', $wechat_user_update_url, ['body' => $post_JSON])->getBody();
-=======
-    public function createUser ($array)
-    {
-            $postJSON = json_encode($array, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
-
-            $weChatUserCreateUrl = 'https://qyapi.weixin.qq.com/cgi-bin/user/create?access_token='.$this->getAccessToken();
-
-            $client = new Client();
-            $rs = $client->request('POST', $weChatUserCreateUrl, ['body' => $postJSON])->getBody();
->>>>>>> origin/master
             //$err = json_decode($rs, true);
             //print_r($err);
             // $t = $err['errcode'];
@@ -440,7 +325,6 @@ class WeChatAPI
             // }
     }
 
-<<<<<<< HEAD
     /**
     * 删除: 用户
     * 
@@ -463,9 +347,6 @@ class WeChatAPI
     * other functions
     *
     */
-=======
-
->>>>>>> origin/master
 }
 
 
