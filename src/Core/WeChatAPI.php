@@ -9,7 +9,7 @@ use Input;
 use Request;
 use Session;
 use GuzzleHttp\Client;
-
+use Psr\Http\Message\StreamInterface;
 /**
 * 微信核心API
 */
@@ -136,6 +136,13 @@ class WeChatAPI
         $this->oAuth2UserInfoArray = $arr;
     }
 
+    /**
+     * 设置用户session, cookie
+     *
+     * @param $userid
+     *
+     * @return mix
+     */
     public function weChatUserSetCookieAndSession()
     {
         $arr = $this->oAuth2UserInfoArray;
@@ -150,8 +157,6 @@ class WeChatAPI
                     //账号状态正常
                     if(!Session::has('id')) Session::put('id', $rec->id);
                     if(!Session::has('name')) Session::put('name', $rec->name);
-                    if(!Session::has('department')) Session::put('department', $rec->department);
-                    if(!Session::has('position')) Session::put('position', $rec->position); 
 
                     Cookie::queue('id', $rec->id, 20160);
 
@@ -169,4 +174,126 @@ class WeChatAPI
 
     }
 
+
+    /**
+     * 初始化部门: 批量建立部门
+     *
+     * 要求: 从未创建部门或者清除所有部门,只余根部门
+     *
+     * @param json
+     *
+     * @return view or redirect
+     */
+    public function initDepartments ()
+    {
+        $recs = App\Department::where('id', '>', 1)->get();
+        //$arr = array();
+
+        if(count($recs)){
+
+            foreach ($recs as $rec) {
+                $arr  = array('name' => $rec->name, 
+                                'parentid' => $rec->parentid, 
+                                'order' => $rec->order, 
+                                'id' => $rec->id,
+                                );
+                $this->createDepartment($arr);
+            } 
+
+        }else{
+            return view('40x',['errorCode' => '4']);
+        }
+    }
+
+    /**
+     * 初始化部门: 新建部门
+     *
+     * 待改进: 从其他模块调用,不能等待返回值 !!!
+     *
+     * @param array :['name', 'parentid', 'order', 'id']
+     *
+     * @return null
+     */
+    public function createDepartment ($array)
+    {
+        $postJSON = json_encode($array, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+        $weChatDepartmentCreateUrl = 'https://qyapi.weixin.qq.com/cgi-bin/department/create?access_token='.$this->getAccessToken();
+
+        $client = new Client();
+        $client->request('POST', $weChatDepartmentCreateUrl, ['body' => $postJSON])->getBody();
+        // $err = json_decode($rs, true);
+
+        // if($err['errcode'] != 0){
+        //     return view('40x',['errorCode' => '5', 'msg' => $err['errmsg']]); // 5: 微信服务器错误
+        //     exit;
+        // }
+    }
+
+    public function initUsers ()
+    {
+       $recs = App\Member::all();
+       //$rec = App\Member::find(2);
+
+        if(count($recs)){
+
+            foreach ($recs as $rec) {
+                $arr  = array(
+                                'userid' => $rec->work_id,
+                                'name' => $rec->name,
+                                'department' => explode('-',$rec->department),
+                                'position' => $rec->position,
+                                'mobile' => $rec->mobile,
+                                'gender' => $rec->gender,
+                                'email' => $rec->email,
+                                'weixinid' => $rec->weixinid,
+                                );
+                $this->createUser($arr);
+               
+            } 
+
+        }else{
+            return view('40x',['errorCode' => '4']);
+        } 
+    }
+    /**
+     * 新建: 用户
+     *
+     * 待改进: 从其他模块调用,不能等待返回值!!!
+     *
+     * @param array :['userid', 'name', 'departmnet', 'position', 'mobile', 'gender', 'email', 'wexinid']
+     *
+     * @return null
+     */
+    public function createUser ($array)
+    {
+            $postJSON = json_encode($array, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+
+            $weChatUserCreateUrl = 'https://qyapi.weixin.qq.com/cgi-bin/user/create?access_token='.$this->getAccessToken();
+
+            $client = new Client();
+            $rs = $client->request('POST', $weChatUserCreateUrl, ['body' => $postJSON])->getBody();
+            //$err = json_decode($rs, true);
+            //print_r($err);
+            // $t = $err['errcode'];
+            // if($t > 0){
+            //     return view('40x',['errorCode' => '5', 'msg' => $err['errmsg']]); // 5: 微信服务器错误
+            //     exit;
+            // }
+    }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
