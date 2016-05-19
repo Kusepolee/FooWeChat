@@ -23,6 +23,7 @@ class WeChatAPI
     protected $corpSecret;
     protected $corpTalken;
     protected $agentID;
+    protected $safe = 1;
 
     protected $client;
     protected $oAuth2UserInfoArray;
@@ -326,15 +327,6 @@ class WeChatAPI
     }
 
     /**
-    * 文本消息
-    *
-    */
-    public function sendText($array)
-    {
-        
-    }
-
-    /**
     * 删除: 用户
     * 
     * @param UserId = members.work_id
@@ -352,6 +344,52 @@ class WeChatAPI
 
     }
 
+    /**
+    * 文本消息
+    * 
+    * @param array - recievors ok
+    *
+    * @return wechat message
+    */
+    public function sendText($array, $body)
+    {
+        $content = ['content'=>$body];
+
+        $array = array_add($array, 'msgtype', 'text');
+        $array = array_add($array, 'agentid', $this->agentID);
+        $array = array_add($array, 'text', $content);
+        $array = array_add($array, 'safe', $this->safe);
+        $post_JSON = json_encode($array, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+
+        $wechat_send_message_url = 'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token='.$this->getAccessToken();
+
+        $client = new Client();
+        $rs = $client->request('POST', $wechat_send_message_url, ['body' => $post_JSON])->getBody();
+        //$err = json_decode($rs, true);
+        //print_r($err);
+        // $t = $err['errcode'];
+        // if($t > 0){
+        //     return view('40x',['errorCode' => '5', 'msg' => $err['errmsg']]); // 5: 微信服务器错误
+        //     exit;
+        // }
+
+    }
+
+    /**
+    * 换取openid
+    *
+    */
+    public function getOpenId($work_id){
+        $wechat_get_openid_url = 'https://qyapi.weixin.qq.com/cgi-bin/user/convert_to_openid?access_token='.$this->getAccessToken();
+        $arr=[];
+        $arr = array_add($arr, 'userid', $work_id);
+        $post_JSON = json_encode($arr, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+        $client = new Client();
+        $rs = $client->request('POST', $wechat_get_openid_url, ['body' => $post_JSON])->getBody();
+        $err = json_decode($rs, true);
+        //print_r($err);
+
+    }
     /**
     * other functions
     *

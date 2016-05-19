@@ -21,3 +21,5 @@ FooWeChat\Providers\RestRoseServiceProvider::class,
 	Illuminate\Html\HtmlServiceProvider::class,
 	'Form'      => Illuminate\Html\FormFacade::class, 
 
+need:simple-qrcdoe
+
