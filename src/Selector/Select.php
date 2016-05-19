@@ -10,7 +10,7 @@ use Session;
 * 信息发送范围
 * 1. $array = [
 *              'user'       => '编号1|编号2', // all -所有
-*              'department' => '市场部|生产部',
+*              'department' => '市场部|生产部|self|self+',
 *              'seek'       => '>:经理@市场部|>=:总监@生产部', //指定角色
 *              'self'       => 'own|master|sub|master+|sub+', //own = 本人, master = 领导, sub = 下属, 带+号:所有领导或下属
 *             ];
@@ -63,10 +63,21 @@ class Select
 
 			$id_list = [];
 			foreach ($names as $name) {
-				$this->checkDepartment($name);
-				$dp = Department::where('name', $name)->first();
-				$id_list[] = $dp->id;
+				if($name === 'self'){
+					$own = $this->getOwnDepartment($this->selfId);
+					$id_list[] = $own;
+				}elseif($name === 'self+'){
+					$owns = $this->getOwnAndSubDepartments($this->selfId);
+					$id_list = array_merge($id_list, $owns);
+				}else{
+					$this->checkDepartment($name);
+					$dp = Department::where('name', $name)->first();
+					$id_list[] = $dp->id;
+				}
 			}
+			
+			$id_list = array_unique($id_list);
+
 			$id_list_str = implode("|", $id_list);
 			$arr = array_add($arr, 'toparty', $id_list_str);
 		}
@@ -465,6 +476,38 @@ class Select
 			    }
 			}
 		}// end foreach 
+
+		return $arr;
+	}
+
+	/*
+	* 获取所在部门
+	*
+	*/
+	public function getOwnDepartment($id)
+	{
+		$target = Member::find($id);
+		return $target->department;
+	}
+
+	/*
+	* 获取所在及下属部门
+	*
+	*/
+	public function getOwnAndSubDepartments($id)
+	{
+		$target = Member::find($id);
+		$code = Department::find($target->department)->code;
+		$code_like = $code.'%';
+
+		$recs = Department::where('code', 'LIKE', $code_like)->get();
+
+		$arr = [];
+		if(count($recs)){
+			foreach ($recs as $rec) {
+				$arr[] = $rec->id;
+			}
+		}
 
 		return $arr;
 	}
