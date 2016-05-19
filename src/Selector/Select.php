@@ -145,14 +145,19 @@ class Select
 				if($v === 'own'){
 					$work_id_list[] = $this->self->work_id;
 				}elseif($v === 'master'){
-					$this->getMaster($this->selfId);
+					$master_array = $this->getMaster($this->selfId);
+					$work_id_list = array_merge($work_id_list, $master_array);
 
 				}elseif($v === 'master+'){
-					//
+					$masters_array = $this->getMasters($this->selfId);
+					$work_id_list = array_merge($work_id_list, $masters_array);
+
 				}elseif($v === 'sub'){
-					//
+					$sub_array = $this->getSub($this->selfId);
+					$work_id_list = array_merge($work_id_list, $sub_array);
 				}elseif($v === 'sub+'){
-					//
+					$subs_array = $this->getSubs($this->selfId);
+					$work_id_list = array_merge($work_id_list, $subs_array);
 				}
 			}//end foreach
 
@@ -246,18 +251,33 @@ class Select
 		$code_list = [];
 
 		foreach ($codes as $c) {
-			$codes = array_pop($codes);
-			if(count($codes) > 0){
-				$co = implode("-", $codes);
-				$code_list[] = $co;
-			}
+			array_pop($codes);
+			if(count($codes) > 0) $code_list[] = implode("-", $codes);
 		}
 
-		$arr = [];
-		$department_ids = Department::whereIn('code', $code_list)->orderBy('code', 'DESC')->get();
+		 $arr = [];
+		 $department_ids = Department::whereIn('code', $code_list)->orderBy('code', 'DESC')->get();
 
-		foreach ($department_ids as $d) {
-			$arr[] = $d->id;
+		 foreach ($department_ids as $d) {
+		 	$arr[] = $d->id;
+		 }
+
+		 return $arr;
+	}
+
+	/**
+	* 获取上级职位
+	*
+	*/
+	public function getMasterPositions($id)
+	{
+		$target_order = Position::find($id)->order;
+		$arr = [];
+
+		$recs = Position::where('order', '<', $target_order)->orderBy('order', 'DESC')->get();
+
+		foreach ($recs as $rec) {
+			$arr[] = $rec->id;
 		}
 
 		return $arr;
@@ -274,10 +294,179 @@ class Select
 		$self_department_id = $target->department;
 
 		$department_ids = $this->getMasterDepartments($target->department);
+		$position_ids = $this->getMasterPositions($target->position);
 
-		$ids = array_unshift($department_ids, $self_department_id);
+		array_unshift($department_ids, $self_department_id);
 
-		print_r($ids);
+		$arr = [];
+		foreach ($department_ids as $d) {
+			foreach ($position_ids as $p) {
+				$recs = Member::where('department', $d)
+				              ->where('position', $p)
+				              ->where('id', '>', 1)
+				              ->where('state', 0)
+				              ->where('show', 0)
+				              ->get();
+				if(count($recs)){
+					foreach ($recs as $r) {
+						$arr[] = $r->work_id;
+					}
+					return $arr;
+				}
+			}//end foreach
+		}//end foreach
+	}
+
+	/*
+	* 获取所有上级
+	*
+	*/
+	public function getMasters($id)
+	{
+		$target = Member::find($id);
+		$self_department_id = $target->department;
+
+		$department_ids = $this->getMasterDepartments($target->department);
+		$position_ids = $this->getMasterPositions($target->position);
+
+		array_unshift($department_ids, $self_department_id);
+
+		$recs = Member::whereIn('department', $department_ids)
+		              ->whereIn('position', $position_ids)
+		              ->where('id', '>', 1)
+		              ->where('state', 0)
+		              ->where('show', 0)
+		              ->get();
+		$arr = [];
+
+		if(count($recs)){
+			foreach ($recs as $rec) {
+				$arr[] = $rec->work_id;
+			}
+			return $arr;
+		}
+	}
+
+	/*
+	* 获取下级部门
+	*
+	*/
+	public function getSubDepartments($id)
+	{
+		$target_code = Department::find($id)->code;
+		$taget_code_like = $target_code.'%';
+
+		$recs = Department::where('code', 'LIKE', $taget_code_like)->orderBy('code')->get();
+
+		$arr = [];
+		if(count($recs)){
+			foreach ($recs as $rec) {
+				$arr[] = $rec->id;
+			}
+			return $arr;
+		}
+
+	}
+
+	/**
+	* 获取下级职位
+	*
+	*/
+	public function getSubPositions($id)
+	{
+		$target_order = Position::find($id)->order;
+		$arr = [];
+
+		$recs = Position::where('order', '>', $target_order)->orderBy('order')->get();
+
+		foreach ($recs as $rec) {
+			$arr[] = $rec->id;
+		}
+
+		return $arr;
+	}
+
+	/**
+	* 获取所有下级
+	*
+	* 1. 在子部门或者本部门
+	* 2. 职位小于
+	*/
+	public function getSubs($id)
+	{
+		$target = Member::find($id);
+
+		$department_ids = $this->getSubDepartments($target->department);
+		$position_ids = $this->getSubPositions($target->position);
+		
+		$recs = Member::whereIn('department', $department_ids)
+		              ->whereIn('position', $position_ids)
+		              ->where('id', '>', 1)
+		              ->where('state', 0)
+		              ->where('show', 0)
+		              ->get();
+
+		$arr = [];             
+		if(count($recs)){
+			foreach ($recs as $rec) {
+				$arr[] = $rec->work_id;
+			}
+			return $arr;
+		}
+
+	}
+
+	/**
+	* 获取下级
+	*
+	* 1. 在本部门, 职位仅次于的人(群)
+	* 2. 在子部门, 职位最高的(不比较职位)
+	*/
+	public function getSub($id)
+	{
+		$target = Member::find($id);
+		$department_ids = $this->getSubDepartments($target->department);
+		$position_ids = $this->getSubPositions($target->position);
+
+		$self_department = $target->department;
+
+		$arr = [];
+
+		foreach ($position_ids as $p) {
+			$recs = Member::where('department', $self_department)
+						  ->where('position', $p)
+			              ->where('id', '>', 1)
+			              ->where('state', 0)
+			              ->where('show', 0)
+			              ->get();
+			if(count($recs)){
+				foreach ($recs as $rec) {
+					$arr[] = $rec->work_id;
+				}
+				break;
+			}
+		}//end foreach
+
+		array_shift($department_ids);
+
+		foreach ($department_ids as $d) {
+			foreach ($position_ids as $p) {
+				$recs = Member::where('department', $d)
+						  ->where('position', $p)
+			              ->where('id', '>', 1)
+			              ->where('state', 0)
+			              ->where('show', 0)
+			              ->get();
+			    if(count($recs)){
+			    	foreach ($recs as $rec) {
+			    		$arr[] = $rec->work_id;
+			    	}
+			    	break;
+			    }
+			}
+		}// end foreach 
+
+		return $arr;
 	}
 
 	/**
