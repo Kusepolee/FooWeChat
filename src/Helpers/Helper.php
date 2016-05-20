@@ -227,6 +227,59 @@ class Helper
 	}
 
 	/**
+	* 获取member中出现的部门
+	*
+	*/
+	public function getDepartmentsInUse($key=0)
+	{
+		$departments = Member::where('members.id','>',1)
+		             ->where('members.state', 0)
+		             ->where('members.show', 0)
+		             ->rightJoin('departments', 'members.department', '=', 'departments.id')
+		             ->groupBy('members.department')
+		             ->distinct()
+		             ->select('members.department', 'departments.name as departmentName')
+		             ->get();
+
+		//$arr = [];
+		$key === 1 ? $arr = [] : $arr = ['0'=>'不限部门'];
+
+		if(count($departments)){
+			foreach ($departments as $d) {
+				$arr = array_add($arr, $d->department, $d->departmentName);
+			}
+		}
+		return $arr;
+	}
+
+	/**
+	* 获取member中出现的职位
+	* 
+	*
+	*/
+	public function getPositionsInUse($key=0)
+	{
+		$positions = Member::where('members.id','>',1)
+		             ->where('members.state', 0)
+		             ->where('members.show', 0)
+		             ->rightJoin('positions', 'members.position', '=', 'positions.id')
+		             ->groupBy('members.position')
+		             ->distinct()
+		             ->select('members.position', 'positions.name as positionName')
+		             ->get();
+
+		//$arr = [];
+		$key === 1 ? $arr = [] : $arr = ['0'=>'不限职位'];
+
+		if(count($positions)){
+			foreach ($positions as $d) {
+				$arr = array_add($arr, $d->position, $d->positionName);
+			}
+		}
+		return $arr;
+	}
+
+	/**
 	* other functions
 	*
 	*/
