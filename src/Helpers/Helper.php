@@ -279,6 +279,29 @@ class Helper
 		return $arr;
 	}
 
+	/*
+	* 获取完整微信二维码信息
+	*
+	*/
+	public function getWechatQrcodeInfo($code)
+	{
+		$prefix = 'http://weixin.qq.com/r/';
+		return $prefix.$code;
+	}
+
+	/**
+	* 检测是否存在个人微信二给码信息
+	*
+	*/
+	public function hasWechatCode($id=0)
+	{
+		if($id === 0) $id = Session::get('id');
+		$wechat_code = Member::find($id)->wechat_code;
+
+		return $wechat_code == '' || $wechat_code == null ? false : true;
+	}
+
+
 	/**
 	* other functions
 	*
