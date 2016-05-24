@@ -157,7 +157,7 @@ class WeChatAPI
         $json = $client->get($wechat_Oauth2_user_info_url)->getBody();
         $arr = json_decode($json, true);
 
-        if(array_has($arr, 'errcode') && (array_get($arr, 'errcode') == 4001 || array_get($arr, 'errcode') == 4002){
+        if(array_has($arr, 'errcode') && (array_get($arr, 'errcode') == 4001 || array_get($arr, 'errcode') == 4002)){
             $this->getAccessTokenFromWechat();
             $this->oAuth2UserInfo();
         }else{
@@ -248,14 +248,13 @@ class WeChatAPI
         $wechat_department_create_url = 'https://qyapi.weixin.qq.com/cgi-bin/department/create?access_token='.$this->getAccessToken();
 
         $client = new Client();
-        $client->request('POST', $wechat_department_create_url, ['body' => $post_JSON])->getBody();
-        
-        // $err = json_decode($rs, true);
+        $json = $client->request('POST', $wechat_department_create_url, ['body' => $post_JSON])->getBody();
+        $arr = json_decode($json, true);
 
-        // if($err['errcode'] != 0){
-        //     return view('40x',['errorCode' => '5', 'msg' => $err['errmsg']]); // 5: 微信服务器错误
-        //     exit;
-        // }
+        if(array_has($arr, 'errcode') && (array_get($arr, 'errcode') == 4001 || array_get($arr, 'errcode') == 4002)){
+            $this->getAccessTokenFromWechat();
+            $this->createDepartment();
+        }
     }
 
     public function initUsers ()
@@ -300,19 +299,18 @@ class WeChatAPI
      */
     public function createUser ($array)
     {
-            $post_JSON = json_encode($array, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+        $post_JSON = json_encode($array, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
 
-            $wechat_user_create_url = 'https://qyapi.weixin.qq.com/cgi-bin/user/create?access_token='.$this->getAccessToken();
+        $wechat_user_create_url = 'https://qyapi.weixin.qq.com/cgi-bin/user/create?access_token='.$this->getAccessToken();
 
-            $client = new Client();
-            $rs = $client->request('POST', $wechat_user_create_url, ['body' => $post_JSON])->getBody();
-            //$err = json_decode($rs, true);
-            //print_r($err);
-            // $t = $err['errcode'];
-            // if($t > 0){
-            //     return view('40x',['errorCode' => '5', 'msg' => $err['errmsg']]); // 5: 微信服务器错误
-            //     exit;
-            // }
+        $client = new Client();
+        $json = $client->request('POST', $wechat_user_create_url, ['body' => $post_JSON])->getBody();
+        $arr = json_decode($json, true);
+
+        if(array_has($arr, 'errcode') && (array_get($arr, 'errcode') == 4001 || array_get($arr, 'errcode') == 4002)){
+            $this->getAccessTokenFromWechat();
+            $this->createUser();
+        }
     }
 
     /**
@@ -326,19 +324,18 @@ class WeChatAPI
      */
     public function updateUser ($array)
     {
-            $post_JSON = json_encode($array, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+        $post_JSON = json_encode($array, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
 
-            $wechat_user_update_url = 'https://qyapi.weixin.qq.com/cgi-bin/user/update?access_token='.$this->getAccessToken();
+        $wechat_user_update_url = 'https://qyapi.weixin.qq.com/cgi-bin/user/update?access_token='.$this->getAccessToken();
 
-            $client = new Client();
-            $rs = $client->request('POST', $wechat_user_update_url, ['body' => $post_JSON])->getBody();
-            //$err = json_decode($rs, true);
-            //print_r($err);
-            // $t = $err['errcode'];
-            // if($t > 0){
-            //     return view('40x',['errorCode' => '5', 'msg' => $err['errmsg']]); // 5: 微信服务器错误
-            //     exit;
-            // }
+        $client = new Client();
+        $json = $client->request('POST', $wechat_user_update_url, ['body' => $post_JSON])->getBody();
+        $arr = json_decode($json, true);
+
+        if(array_has($arr, 'errcode') && (array_get($arr, 'errcode') == 4001 || array_get($arr, 'errcode') == 4002)){
+            $this->getAccessTokenFromWechat();
+            $this->updateUser();
+        }
     }
 
     /**
@@ -352,10 +349,13 @@ class WeChatAPI
     {
         $wechat_user_delete_url = 'https://qyapi.weixin.qq.com/cgi-bin/user/delete?access_token='.$this->getAccessToken().'&userid='.$work_id;
         $client = new Client();
-        $client->get($wechat_user_delete_url);
-        //$arr = json_decode($json, true);
+        $json = $client->get($wechat_user_delete_url)->getBody();;
+        $arr = json_decode($json, true);
 
-        //return $arr['errcode'] === 0 ? true : false;
+        if(array_has($arr, 'errcode') && (array_get($arr, 'errcode') == 4001 || array_get($arr, 'errcode') == 4002)){
+            $this->getAccessTokenFromWechat();
+            $this->deleteUser();
+        }
 
     }
 
@@ -379,15 +379,13 @@ class WeChatAPI
         $wechat_send_message_url = 'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token='.$this->getAccessToken();
 
         $client = new Client();
-        $rs = $client->request('POST', $wechat_send_message_url, ['body' => $post_JSON])->getBody();
-        //$err = json_decode($rs, true);
-        //print_r($err);
-        // $t = $err['errcode'];
-        // if($t > 0){
-        //     return view('40x',['errorCode' => '5', 'msg' => $err['errmsg']]); // 5: 微信服务器错误
-        //     exit;
-        // }
+        $json = $client->request('POST', $wechat_send_message_url, ['body' => $post_JSON])->getBody();
+        $arr = json_decode($json, true);
 
+        if(array_has($arr, 'errcode') && (array_get($arr, 'errcode') == 4001 || array_get($arr, 'errcode') == 4002)){
+            $this->getAccessTokenFromWechat();
+            $this->sendText();
+        }
     }
 
     /**
@@ -400,11 +398,57 @@ class WeChatAPI
         $arr = array_add($arr, 'userid', $work_id);
         $post_JSON = json_encode($arr, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
         $client = new Client();
-        $rs = $client->request('POST', $wechat_get_openid_url, ['body' => $post_JSON])->getBody();
-        $err = json_decode($rs, true);
-        //print_r($err);
+        $json = $client->request('POST', $wechat_get_openid_url, ['body' => $post_JSON])->getBody();
+        $err = json_decode($json, true);
+
+        if(array_has($arr, 'errcode') && (array_get($arr, 'errcode') == 4001 || array_get($arr, 'errcode') == 4002)){
+            $this->getAccessTokenFromWechat();
+            $this->getOpenId();
+        }
+    }
+
+    /**
+    * 从微信换取jsapi_ticket并保存
+    *
+    * @param token
+    *
+    * @return string 
+    */
+    public function getJsapiTicketFromWechat()
+    {
+        $wechat_jsapi_url = 'https://qyapi.weixin.qq.com/cgi-bin/get_jsapi_ticket?access_token='.$this->getAccessToken();
+        $client = new Client();
+        $json = $client->get($wechat_jsapi_url)->getBody();
+        $arr = json_decode($json, true);
+
+        if(array_has($arr, 'errcode') && (array_get($arr, 'errcode') == 4001 || array_get($arr, 'errcode') == 4002)){
+            $this->getAccessTokenFromWechat();
+            $this->getJsapiTicket();
+        }else{
+            $jsapi_ticket = $arr['ticket'];
+            $expire = $arr['expires_in'];
+            ServerVal::updateOrCreate(['var_name' => 'jsapi'], ['var_value'=> $jsapi_ticket, 'expire'=>$expire, 'var_up_time' => time()]);
+            return $arr['ticket'];
+        }
 
     }
+
+    /**
+    * 获取jsapi_ticket
+    *
+    */
+    public function getJsapiTicket()
+    {
+        $serverVal = $this->searchServeVal('jsapi');
+        if(count($serverVal))
+        {
+            return $serverVal;
+        }else{
+            return $this->getJsapiTicketFromWechat();
+        };
+    }
+
+
     /**
     * other functions
     *
