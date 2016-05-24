@@ -260,6 +260,8 @@ class WeChatAPI
     public function initUsers ()
     {
        $recs = Member::where('members.id', '>', 1)
+                       ->where('show', 0)
+                       ->where('private', 1)
                        ->leftJoin('positions', 'members.position', '=', 'positions.id')
                        ->select('members.*', 'positions.name as positionName')
                        ->get();
@@ -356,6 +358,56 @@ class WeChatAPI
             $this->getAccessTokenFromWechat();
             $this->deleteUser();
         }
+
+    }
+
+    /**
+    * 获取在微信,但没有关注的人员
+    *
+    * @param null
+    *
+    * @return array work_ids
+    */
+    public function getWechatUsersNotFollow()
+    {
+        $conf = Config::get('foowechat');
+        $inside_department_id = $conf['custom']['inside_department_id'];
+
+        $wechat_Inside_department_not_follow_users_url = 'https://qyapi.weixin.qq.com/cgi-bin/user/simplelist?access_token='.$this->getAccessToken().'&department_id='.$inside_department_id.'&fetch_child=1&status=4';
+
+        $client = new Client();
+        $json = $client->get($wechat_Inside_department_not_follow_users_url)->getBody();;
+        $arr = json_decode($json, true);
+
+        if(array_has($arr, 'errcode') && (array_get($arr, 'errcode') == 4001 || array_get($arr, 'errcode') == 4002)){
+            $this->getAccessTokenFromWechat();
+            $this->getWechatUsersNotFollow();
+        }else{
+            $array = [];
+            $recs = $arr['userlist'];
+            foreach ($recs as $rec) {
+                $array[] = $rec['userid'];
+            }
+            return $array;
+        }
+    }
+
+    /**
+    * 验证是否还未关注
+    *
+    * @param $id or null 
+    *
+    * @return boolean
+    */
+    public function hasFollow($id=0)
+    {
+        $work_id_list = $this->getWechatUsersNotFollow();
+
+        if ($id === 0) $id = Session::get('id');
+
+        $work_id = Member::find($id)->work_id;
+
+        return array_search($work_id, $work_id_list) === false ? true : false;
 
     }
 

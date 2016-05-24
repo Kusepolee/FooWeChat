@@ -27,7 +27,7 @@ use Session;
 *		exit;
 *     }
 *
-* 2. 不写规则,表示不限制; root用户无限制
+*  2. 不写规则,表示不限制; root用户无限制
 */
 class Auth
 {
@@ -634,7 +634,6 @@ class Auth
 		}
 		return $array;
 	}
-
 
 
 	/**

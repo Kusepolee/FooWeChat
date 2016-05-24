@@ -128,6 +128,7 @@ class Select
 				                 ->whereIn('position', $position_id_list)
 				                 ->where('state', 0)
 				                 ->where('show', 0)
+				                 ->where('private', 1)
 				                 ->where('id', '>', 1)
 				                 ->get();
 
@@ -314,6 +315,9 @@ class Select
 			foreach ($position_ids as $p) {
 				$recs = Member::where('department', $d)
 				              ->where('position', $p)
+				              ->where('new', 1)
+				              ->where('private', 1)
+				              ->where('show', 0)
 				              ->where('id', '>', 1)
 				              ->where('state', 0)
 				              ->where('show', 0)
@@ -346,6 +350,8 @@ class Select
 		              ->whereIn('position', $position_ids)
 		              ->where('id', '>', 1)
 		              ->where('state', 0)
+              		  ->where('new', 1)
+		              ->where('private', 1)
 		              ->where('show', 0)
 		              ->get();
 		$arr = [];
@@ -414,6 +420,8 @@ class Select
 		              ->whereIn('position', $position_ids)
 		              ->where('id', '>', 1)
 		              ->where('state', 0)
+              		  ->where('new', 1)
+		              ->where('private', 1)
 		              ->where('show', 0)
 		              ->get();
 
@@ -448,6 +456,8 @@ class Select
 						  ->where('position', $p)
 			              ->where('id', '>', 1)
 			              ->where('state', 0)
+			              ->where('new', 1)
+			              ->where('private', 1)
 			              ->where('show', 0)
 			              ->get();
 			if(count($recs)){
@@ -466,6 +476,8 @@ class Select
 						  ->where('position', $p)
 			              ->where('id', '>', 1)
 			              ->where('state', 0)
+			              ->where('new', 1)
+			              ->where('private', 1)
 			              ->where('show', 0)
 			              ->get();
 			    if(count($recs)){
