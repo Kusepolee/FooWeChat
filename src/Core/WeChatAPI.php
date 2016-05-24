@@ -104,19 +104,28 @@ class WeChatAPI
             return $serverVal;
         }else{
             
-            $wechat_get_token_url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=".$this->corpID."&corpsecret=".$this->corpSecret;
-            $client = new Client();
-            $json = $client->get($wechat_get_token_url)->getBody();
-            $arr = json_decode($json, true);
-            
-            $wehat_token = $arr['access_token'];
-            $expire = $arr['expires_in'];
-
-            $go = ServerVal::updateOrCreate(['var_name' => 'token'], ['var_value'=> $wehat_token, 'expire'=>$expire, 'var_up_time' => time()]);
-
-            return $wehat_token;
+            return $this->getAccessTokenFromWechat();
         };
 	}
+
+    /**
+    * 从微信服务器获取token
+    *
+    */
+    public function getAccessTokenFromWechat()
+    {
+        $wechat_get_token_url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=".$this->corpID."&corpsecret=".$this->corpSecret;
+        $client = new Client();
+        $json = $client->get($wechat_get_token_url)->getBody();
+        $arr = json_decode($json, true);
+        
+        $wehat_token = $arr['access_token'];
+        $expire = $arr['expires_in'];
+
+        $go = ServerVal::updateOrCreate(['var_name' => 'token'], ['var_value'=> $wehat_token, 'expire'=>$expire, 'var_up_time' => time()]);
+
+        return $wehat_token;
+    }
 
     /**
      * 获取微信用户信息:1. 获取cdoe
@@ -147,7 +156,13 @@ class WeChatAPI
         $client = new Client();
         $json = $client->get($wechat_Oauth2_user_info_url)->getBody();
         $arr = json_decode($json, true);
-        $this->oAuth2UserInfoArray = $arr;
+
+        if(array_has($arr, 'errcode') && (array_get($arr, 'errcode') == 4001 || array_get($arr, 'errcode') == 4002){
+            $this->getAccessTokenFromWechat();
+            $this->oAuth2UserInfo();
+        }else{
+            $this->oAuth2UserInfoArray = $arr;
+        }
     }
 
     /**
