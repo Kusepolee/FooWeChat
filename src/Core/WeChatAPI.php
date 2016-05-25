@@ -24,6 +24,7 @@ class WeChatAPI
     protected $corpTalken;
     protected $agentID;
     protected $safe = 1;
+    protected $notFollowUsers;
 
     protected $client;
     protected $oAuth2UserInfoArray;
@@ -401,7 +402,13 @@ class WeChatAPI
     */
     public function hasFollow($id=0)
     {
-        $work_id_list = $this->getWechatUsersNotFollow();
+        $work_id_list = [];
+        if (count($this->notFollowUsers)) {
+            $work_id_list = $this->notFollowUsers;
+        }else{
+            $work_id_list = $this->getWechatUsersNotFollow();
+            $this->notFollowUsers = $work_id_list;
+        }
 
         if ($id === 0) $id = Session::get('id');
 

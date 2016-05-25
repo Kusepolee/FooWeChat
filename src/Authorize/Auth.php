@@ -635,6 +635,27 @@ class Auth
 		return $array;
 	}
 
+	/**
+	* 职位平级
+	*
+	*/
+	public function samePosition($id)
+	{
+		$target_position = Member::find($id)->position;
+		$self_position = $this->self->position;
+		return $target_position === $self_position ? true : false;
+	}
+
+	/**
+	* 同部门
+	*
+	*/
+	public function sameDepartment($id)
+	{
+		$target_department = Member::find($id)->department;
+		$self_department = $this->self->department;
+		return $target_department === $self_department ? true : false;
+	}
 
 	/**
 	* other functions
