@@ -47,6 +47,7 @@ class Helper
 						'3' =>'权限不足',
 						'4' =>'重要提示:删除',
 						'5' =>'操作成功',
+						'6' =>'提示'
 		             ];
 
 		$errorCodes = [
@@ -62,7 +63,8 @@ class Helper
 						'2.5' => "您没有权限继续操作, 可能是您的账号被锁定或删除",
 						'3.1' => "您没有权限进行此项操作, 或者使用不允许的方法访问.若需要继续使用或此次警示属于异常情况, 请联系系统管理员.",
 						'4.1' => "您正在进行 [删除用户] 操作, 此操作将从系统中删除用户记录, 该用户将不能使用本系统, 包括通过微信. 删除是不可恢复的!!",
-						'5.1' => "您的操作已成功!"
+						'5.1' => "您的操作已成功!",
+						'6.1' => "根据您的查询条件, 找不到到相关记录"
 					  ];
 		$arr = [];
 		$arr[] = $errorTypes[$type];
@@ -299,6 +301,111 @@ class Helper
 		$wechat_code = Member::find($id)->wechat_code;
 
 		return $wechat_code == '' || $wechat_code == null ? false : true;
+	}
+
+	/**
+	* 获取部门数组
+	*
+	* @param operator, key :操作符, 值
+	*
+	* @return array
+	*/
+	public function getDepartmentsArray($operator,$key)
+	{
+		$department_code = Department::find($key)->code;
+		$department_array = explode('-', $department_code);
+		$inside = $this->custom('inside_department_id');
+
+		$inside_departments = [];
+
+		foreach ($department_array as $key) {
+			if($key > $inside) $inside_departments[] = $key;
+		}
+
+		$code = $department_code.'%';
+		$subs = Department::where('code', 'LIKE', $code)->orderBy('order')->get();
+		if (!count($subs)) return $a = [];
+
+		$sub = [];
+		foreach ($subs as $s) {
+			$sub[] = $s->id;
+		}
+
+
+		switch ($operator) {
+			case '>=':
+				return $inside_departments;
+				break;
+
+			case '>':
+				array_pop($inside_departments);
+				return $inside_departments;
+				break;
+
+			case '=':
+				$a = [];
+				$a[] = $key;
+				return $a;
+				break;
+
+			case '<=':
+				return $sub;
+				break;
+
+			case '<':
+				array_shift($sub);
+				return $sub;
+				break;
+			
+			default:
+				# code...
+				break;
+		}
+	}
+
+	/**
+	* 获取职位数组
+	*
+	* @param operator, key :操作符, 值
+	*
+	* @return array :id
+	*/
+	public function getPositionsArray($operator,$key)
+	{
+		$true_operator = '';
+
+		switch ($operator) {
+			case '>':
+				$true_operator = '<';
+				break;
+
+			case '>=':
+				$true_operator = '<=';
+				break;
+			case '<':
+				$true_operator = '>';
+				break;
+			case '<=':
+				$true_operator = '>=';
+				break;
+			
+			default:
+				$true_operator = $operator;
+				break;
+		}
+		$order = Position::find($key)->order;
+		$recs = Position::where('order', $true_operator, $order)
+		                ->where('id', '>', 1)
+		                ->get();
+
+		$arr = [];
+		if (count($recs)) {
+			foreach ($recs as $rec) {
+				$arr[] = $rec->id;
+			}
+		}
+
+		return $arr;
 	}
 
 

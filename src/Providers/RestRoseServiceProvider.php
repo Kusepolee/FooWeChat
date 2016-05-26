@@ -50,6 +50,5 @@ class RestRoseServiceProvider extends ServiceProvider
         {
             return new \FooWeChat\Log\Logie;
         });
-
     }
 }
