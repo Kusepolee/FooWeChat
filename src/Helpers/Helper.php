@@ -408,6 +408,78 @@ class Helper
 		return $arr;
 	}
 
+	/**
+	* 用户是否有头像
+	*
+	* @param $id
+	*
+	* @return boolean
+	*/
+	public function hasImage($id=0)
+	{
+		if($id === 0) $id = Session::get('id');
+		$target_image = Member::find($id)->img;
+
+		return $target_image == '' || $target_image == null ? false : true; 
+	}
+
+	/**
+	* 获取用户表字段
+	*
+	* @param array 字段名
+	*
+	* @return array
+	*/
+	public function getMemberItems($array, $id=0)
+	{
+		if($id === 0) $id = Session::get('id');
+
+		$values = [];
+		foreach ($array as $k) {
+			$temp = Member::find($id)->$k;
+			$values[] = $temp;
+		}
+		return $values;
+	}
+
+		/**
+	* 资源提醒
+	*
+	*/
+	public function isNotice($id)
+	{
+		$rec = Resource::find($id);
+		$remain = $rec->remain;
+		$notice = $rec->notice;
+		$alert = $rec->alert;
+
+		return $remain<=$notice && $remain>$alert ? true : false;
+	}
+
+	/**
+	* 资源报警
+	*
+	*/
+	public function isAlert($id)
+	{
+		$rec = Resource::find($id);
+		$remain = $rec->remain;		
+		$alert = $rec->alert;
+
+		return $remain<=$alert && $remain>0 ? true : false;
+	}
+
+	/**
+	* 资源库存空
+	*
+	*/
+	public function isEmpty($id)
+	{
+		$rec = Resource::find($id);
+		$remain = $rec->remain;
+
+		return $remain<=0 ? true : false;
+	}
 
 	/**
 	* other functions
