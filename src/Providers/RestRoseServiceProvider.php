@@ -16,7 +16,7 @@ class RestRoseServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__.'/../Core/Publishes/.env' => base_path('.env'),
-            __DIR__.'/../Core/Publishes/restrose.php' => config_path('restrose.php'),
+            __DIR__.'/../Core/Publishes/restrose.php' => base_path('/config/restrose.php'),
         ]);
     }
 
