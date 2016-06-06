@@ -443,6 +443,54 @@ class Helper
 	}
 
 	/**
+	 * 资源状态监测 //louis
+	 *
+	 */
+	public function rescState($id)
+	{
+		$rec = Resource::find($id);
+		$remain = $rec->remain;
+		$notice = $rec->notice;
+		$alert = $rec->alert;
+		$state;
+
+		if($notice != 0 && $alert != 0){
+			if($remain<=0) $state = 0;
+			elseif($remain<=$alert && $remain>0) $state = 1;
+			elseif($remain<=$notice && $remain>$alert) $state = 2;
+			else $state = 3;
+		}else{
+			$state = 4;
+		}
+
+		return $state;
+	}
+
+	/**
+	* 获取resource中出现的类型 //louis
+	*
+	*/
+	public function getRescTypesInUse($key=0)
+	{
+		$types = Resource::where('resources.show', 0)
+		             ->rightJoin('config', 'resources.type', '=', 'config.id')
+		             ->groupBy('resources.type')
+		             ->distinct()
+		             ->select('resources.type', 'config.name as typeName')
+		             ->get();
+
+		//$arr = [];
+		$key === 1 ? $arr = [] : $arr = ['0'=>'不限类型'];
+
+		if(count($types)){
+			foreach ($types as $t) {
+				$arr = array_add($arr, $t->type, $t->typeName);
+			}
+		}
+		return $arr;
+	}
+
+	/**
 	* other functions
 	*
 	*/
