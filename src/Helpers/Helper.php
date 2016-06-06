@@ -20,13 +20,13 @@ class Helper
 	//获取公司配置信息
 	public function custom($key)
 	{
-		$conf = Config::get('foowechat');
+		$conf = Config::get('restrose');
 		return $conf['custom'][$key];
 	}
 
 	public function copyRight()
 	{
-		$conf = Config::get('foowechat');
+		$conf = Config::get('restrose');
 		$year = $conf['custom']['year'];
 		$name = $conf['custom']['name'];
 		$thisYear = date('Y');
