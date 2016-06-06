@@ -14,24 +14,10 @@ class RestRoseServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
-        //public: bootstrap文件
-
-
-        //Core模块
-        // $this->publishes([
-        //     __DIR__.'/../Core/Publishes/Config/wechat.php' => config_path('wechat.php'),
-        //     __DIR__.'/../Core/Publishes/Migrations/' => database_path('migrations'),
-        //     __DIR__.'/../Core/Publishes/Models/' => app_path(),
-        // ]);
-
-        // //Departments
-        // $this->publishes([
-        //     __DIR__.'/../Departments/Publishes/Migrations/' => database_path('migrations'),
-        //     __DIR__.'/../Departments/Publishes/Models/' => app_path(),
-        // ]);
-
-        
+        $this->publishes([
+            __DIR__.'/../Core/Publishes/.env' => base_path('.env'),
+            __DIR__.'/../Core/Publishes/restrose.php' => base_path('config/restrose.php'),
+        ]);
     }
 
     /**

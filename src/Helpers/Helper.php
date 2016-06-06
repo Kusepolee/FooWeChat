@@ -20,13 +20,13 @@ class Helper
 	//获取公司配置信息
 	public function custom($key)
 	{
-		$conf = Config::get('foowechat');
+		$conf = Config::get('restrose');
 		return $conf['custom'][$key];
 	}
 
 	public function copyRight()
 	{
-		$conf = Config::get('foowechat');
+		$conf = Config::get('restrose');
 		$year = $conf['custom']['year'];
 		$name = $conf['custom']['name'];
 		$thisYear = date('Y');
@@ -440,45 +440,6 @@ class Helper
 			$values[] = $temp;
 		}
 		return $values;
-	}
-
-		/**
-	* 资源提醒
-	*
-	*/
-	public function isNotice($id)
-	{
-		$rec = Resource::find($id);
-		$remain = $rec->remain;
-		$notice = $rec->notice;
-		$alert = $rec->alert;
-
-		return $remain<=$notice && $remain>$alert ? true : false;
-	}
-
-	/**
-	* 资源报警
-	*
-	*/
-	public function isAlert($id)
-	{
-		$rec = Resource::find($id);
-		$remain = $rec->remain;		
-		$alert = $rec->alert;
-
-		return $remain<=$alert && $remain>0 ? true : false;
-	}
-
-	/**
-	* 资源库存空
-	*
-	*/
-	public function isEmpty($id)
-	{
-		$rec = Resource::find($id);
-		$remain = $rec->remain;
-
-		return $remain<=0 ? true : false;
 	}
 
 	/**
