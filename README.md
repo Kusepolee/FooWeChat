@@ -23,3 +23,5 @@ FooWeChat\Providers\RestRoseServiceProvider::class,
 
 need:simple-qrcdoe
 
+FUCK the git NND cao shit
+
