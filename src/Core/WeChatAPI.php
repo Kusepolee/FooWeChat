@@ -55,7 +55,7 @@ class WeChatAPI
      */
 	private function conf($key)
 	{
-		$conf = Config::get('foowechat');
+		$conf = Config::get('restrose');
 		return $conf[$conf['mode']][$key];
 	}
 
@@ -371,7 +371,7 @@ class WeChatAPI
     */
     public function getWechatUsersNotFollow()
     {
-        $conf = Config::get('foowechat');
+        $conf = Config::get('restrose');
         $inside_department_id = $conf['custom']['inside_department_id'];
 
         $wechat_Inside_department_not_follow_users_url = 'https://qyapi.weixin.qq.com/cgi-bin/user/simplelist?access_token='.$this->getAccessToken().'&department_id='.$inside_department_id.'&fetch_child=1&status=4';
