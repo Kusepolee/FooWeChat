@@ -442,45 +442,6 @@ class Helper
 		return $values;
 	}
 
-		/**
-	* 资源提醒
-	*
-	*/
-	public function isNotice($id)
-	{
-		$rec = Resource::find($id);
-		$remain = $rec->remain;
-		$notice = $rec->notice;
-		$alert = $rec->alert;
-
-		return $remain<=$notice && $remain>$alert ? true : false;
-	}
-
-	/**
-	* 资源报警
-	*
-	*/
-	public function isAlert($id)
-	{
-		$rec = Resource::find($id);
-		$remain = $rec->remain;		
-		$alert = $rec->alert;
-
-		return $remain<=$alert && $remain>0 ? true : false;
-	}
-
-	/**
-	* 资源库存空
-	*
-	*/
-	public function isEmpty($id)
-	{
-		$rec = Resource::find($id);
-		$remain = $rec->remain;
-
-		return $remain<=0 ? true : false;
-	}
-
 	/**
 	* other functions
 	*
