@@ -5,6 +5,7 @@ use App\Department;
 use App\FormConfig;
 use App\Member;
 use App\Position;
+use App\Resource;
 use Config;
 use DB;
 use Session;
