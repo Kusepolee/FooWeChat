@@ -22,8 +22,8 @@ class WeChatAPI
     protected $corpID;
     protected $corpSecret;
     protected $corpTalken;
-    protected $agentID;
-    protected $safe = 1;
+    public $agentID;
+    public $safe = 1;
     protected $notFollowUsers;
 
     protected $client;
