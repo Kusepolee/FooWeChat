@@ -448,6 +448,43 @@ class WeChatAPI
     }
 
     /**
+    * news 消息
+    *
+    * $arr = ['title'=>'标题','description'=>'介绍','url'=>'链接','picurl'=>'图片链接'];
+    *
+    * @param array
+    * @return send news
+    */
+    public function sendNews($array, $arr)
+    {
+        $array = array_add($array, 'msgtype', 'news');
+        $array = array_add($array, 'agentid', $this->agentID);
+        
+
+        $news = ['articles'=>''];
+        $array = array_add($array, 'news', $news);
+
+        $array['news']['articles'] = $arr;
+
+        //print_r($array);
+        $post_JSON = json_encode($array, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+
+        $wechat_send_message_url = 'https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token='.$this->getAccessToken();
+
+        $client = new Client();
+        $json = $client->request('POST', $wechat_send_message_url, ['body' => $post_JSON])->getBody();
+        $arr = json_decode($json, true);
+
+        print_r($arr);
+
+        if(array_has($arr, 'errcode') && (array_get($arr, 'errcode') == 4001 || array_get($arr, 'errcode') == 4002)){
+            $this->getAccessTokenFromWechat();
+            $this->sendText();
+        }
+
+    }
+
+    /**
     * 换取openid
     *
     */
