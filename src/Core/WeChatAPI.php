@@ -475,7 +475,7 @@ class WeChatAPI
         $json = $client->request('POST', $wechat_send_message_url, ['body' => $post_JSON])->getBody();
         $arr = json_decode($json, true);
 
-        print_r($arr);
+        //print_r($arr);
 
         if(array_has($arr, 'errcode') && (array_get($arr, 'errcode') == 4001 || array_get($arr, 'errcode') == 4002)){
             $this->getAccessTokenFromWechat();
