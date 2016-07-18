@@ -386,9 +386,18 @@ class WeChatAPI
         }else{
             $array = [];
             $recs = $arr['userlist'];
-            foreach ($recs as $rec) {
-                $array[] = $rec['userid'];
+
+            if(count($recs)){
+                foreach ($recs as $rec) {
+                    $array[] = $rec['userid'];
+                }
             }
+
+            //临时存放, 10秒过期
+            $str = implode('|', $array);
+            $expire = 10;
+            ServerVal::updateOrCreate(['var_name' => 'follow_state'], ['var_value'=> $str, 'expire'=>$expire, 'var_up_time' => time()]);
+
             return $array;
         }
     }
@@ -402,19 +411,15 @@ class WeChatAPI
     */
     public function hasFollow($id=0)
     {
-        $work_id_list = [];
-        if (count($this->notFollowUsers)) {
-            $work_id_list = $this->notFollowUsers;
-        }else{
-            $work_id_list = $this->getWechatUsersNotFollow();
-            $this->notFollowUsers = $work_id_list;
-        }
+        //检查临时存放
+        $server_val = $this->searchServeVal('follow_state');
+        count($server_val) ? $not_follow_list = explode('|', $server_val) : $not_follow_list = $this->getWechatUsersNotFollow();
 
         if ($id === 0) $id = Session::get('id');
 
         $work_id = Member::find($id)->work_id;
 
-        return array_search($work_id, $work_id_list) === false ? true : false;
+        return array_search($work_id, $not_follow_list) === false ? true : false;
 
     }
 
