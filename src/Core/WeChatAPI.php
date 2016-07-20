@@ -187,14 +187,15 @@ class WeChatAPI
                 //账号状态正常
                 if(!Session::has('id')) Session::put('id', $rec->id);
                 if(!Session::has('name')) Session::put('name', $rec->name);
+                if(!Session::has('deviceid')) Session::put('deviceid', $deviceid);
 
                 Cookie::queue('id', $rec->id, 20160);
+                Cookie::queue('deviceid', $deviceid, 20160);
 
             }else{
                 return view('40x',['color'=>'warning', 'type'=>'2', 'code'=>'2.1']);
             }
                 
-
         }else{
             return view('40x',['color'=>'danger', 'type'=>'1', 'code'=>'1.2']);
         }
