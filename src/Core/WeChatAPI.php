@@ -549,6 +549,33 @@ class WeChatAPI
         };
     }
 
+    /**
+    * 获取js-sdk签名
+    *
+    */
+    public function getSignature($debug, $arr)
+    {
+        $url = Request::url();
+        $group_ticket = $this->getJsapiTicket();
+        $noncestr = str_random(10);
+        $timestamp = time();
+        $url = $url;
+
+        $string = 'jsapi_ticket='.$group_ticket.'&noncestr='.$noncestr.'&timestamp='.$timestamp.'&url='.$url;
+        $signature = sha1($string);
+
+        $array = [];
+        $array = array_add($array, 'debug', $debug);
+        $array = array_add($array, 'appId', $this->corpID);
+        $array = array_add($array, 'timestamp', $timestamp);
+        $array = array_add($array, 'nonceStr', $noncestr);
+        $array = array_add($array, 'signature', $signature);
+        $array = array_add($array, 'jsApiList', $arr);
+
+        $json = json_encode($array, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+        return $json;
+    }
+
 
     /**
     * other functions
