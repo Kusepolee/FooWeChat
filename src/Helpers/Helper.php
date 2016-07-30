@@ -466,7 +466,7 @@ class Helper
 		$alert = $rec->alert;
 		$state;
 
-		if($notice != 0 && $alert != 0){
+		if($rec->type != 3){
 			if($remain<=0) $state = 0;
 			elseif($remain<=$alert && $remain>0) $state = 1;
 			elseif($remain<=$notice && $remain>$alert) $state = 2;
